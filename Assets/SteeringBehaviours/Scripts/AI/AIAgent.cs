@@ -11,7 +11,7 @@ namespace SteeringBehaviours
         //Public declaration for NavMeshAgent, used to navigate the terrain. Functions will not work if UnityEngine.AI is not mentioned in the system requirements
 
         private Vector3 point;
-
+        //Co ordinates in scene for point
 
         void Update()
         {
