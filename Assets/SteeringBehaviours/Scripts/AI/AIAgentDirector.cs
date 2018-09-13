@@ -34,6 +34,20 @@ namespace SteeringBehaviours
                     }
                 }
             }
+            if (Input.GetMouseButtonDown(1))
+            {
+                Flee flee = agent.GetComponent<Flee>();
+                if (flee)
+                {
+                    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast(camRay, out hit, 1000f))
+                    {
+                        placeHolder.position -= hit.point;
+                        flee.target = placeHolder;
+                    }
+                }
+            }
         }
     }
 }

@@ -7,9 +7,12 @@ namespace SteeringBehaviours
     public class Flee : SteeringBehaviour
     {
         public Transform target;
+        public float stoppingDistance;
         public override Vector3 GetForce()
         {
-            return base.GetForce();
+            Vector3 direction = target.position - owner.transform.position;
+            direction.Normalize();
+            return direction * owner.maxSpeed;
         }
     }
 }
