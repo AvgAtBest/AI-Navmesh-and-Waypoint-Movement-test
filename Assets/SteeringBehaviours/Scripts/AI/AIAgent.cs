@@ -7,24 +7,46 @@ namespace SteeringBehaviours
 {
     public class AIAgent : MonoBehaviour
     {
-        public NavMeshAgent agent;
-        //Public declaration for NavMeshAgent, used to navigate the terrain. Functions will not work if UnityEngine.AI is not mentioned in the system requirements
+        public float maxSpeed = 10f;
+        public float maxDistance = 5f;
+        public bool updatePosition = true;
+        public bool updateRotation = true;
+        public Vector3 velocity;
 
-        private Vector3 point;
-        //Co ordinates in scene for point
+        private NavMeshAgent agent;
+        private SteeringBehaviour[] behaviours;
+        private Vector3 force;
 
-        void Update()
+        private void Awake()
         {
-            //agent.SetDestination(target.position);
-            //Sets AI agent destitation on navmesh to point position value
-            if (point.magnitude > 0)
+            behaviours = GetComponents<SteeringBehaviour>();
+            agent = GetComponent<NavMeshAgent>();
+        }
+        private void Update()
+        {
+            ComputeForces();
+            ApplyVelocity();
+        }
+        private void ComputeForces()
+        {
+            //Reset velocity
+            velocity = Vector3.zero;
+            //loop through each behaviour
+            for(int i = 0; i < behaviours.Length; i++)
             {
-                agent.SetDestination(point);
+                //Get force from behaviour
+                Vector3 force = behaviours[i].GetForce();
+                //Add it to velocity
+                velocity += force;
             }
         }
-        public void SetTarget(Vector3 point)
+        //apply total velocity to ai agent
+        private void ApplyVelocity()
         {
-            this.point = point;
+            //Get an offset position as new target
+            Vector3 point = transform.position + velocity * Time.deltaTime;
+            //Apply velocity to transform
+            agent.SetDestination(point);
         }
     }
 }
