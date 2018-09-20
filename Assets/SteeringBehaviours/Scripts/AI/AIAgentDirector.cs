@@ -6,7 +6,7 @@ namespace SteeringBehaviours
 {
     public class AIAgentDirector : MonoBehaviour
     {
-        public AIAgent agent;
+        public AIAgent[] agents;
         public Transform placeHolder;
         private void OnDrawGizmosSelected()
         {
@@ -16,37 +16,31 @@ namespace SteeringBehaviours
         }
         void FixedUpdate()
         {
-            if (Input.GetMouseButtonDown(0))
+            foreach (var agent in agents)
             {
-                //attempts to get the seek component on the agent
-                Seek seek = agent.GetComponent<Seek>();
-                //if seek is not null
-                if (seek)
+                if (Input.GetMouseButtonDown(0))
                 {
+
                     Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
                     if (Physics.Raycast(camRay, out hit, 1000f))
                     {
-                        //update the transform's position
+                        //attempts to get the seek component on the agent
+                        Seek seek = agent.GetComponent<Seek>();
+                        Flee flee = agent.GetComponent<Flee>();
                         placeHolder.position = hit.point;
-                        //update seek's target
-                        seek.target = placeHolder;
+                        //update the transform's position
+
+                        if (seek)
+                            seek.target = placeHolder;
+
+                        if (flee)
+                            flee.target = placeHolder;
+
+
                     }
                 }
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                Flee flee = agent.GetComponent<Flee>();
-                if (flee)
-                {
-                    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastHit hit;
-                    if (Physics.Raycast(camRay, out hit, 1000f))
-                    {
-                        placeHolder.position -= hit.point;
-                        flee.target = placeHolder;
-                    }
-                }
+
             }
         }
     }
